@@ -1,44 +1,35 @@
-// d3.json('samples.json').then(function(sampleData){
-
-//     var nameIds = sampleData.names;
-//     console.log(sampleData.samples[0].otu_ids.slice(0,10));
-//     console.log(sampleData.samples[0].sample_values.slice(0,10));
-
-// });
-
-
 function getPlots(id) {
 
-    d3.json("samples.json").then (sampledata =>{
-        console.log(sampledata)
-        
-        var otuIds = sampledata.samples[0].otu_ids;
-        console.log(otuIds)
-        
-        var sampleValues = sampledata.samples[0].sample_values.slice(0,10);
-        console.log(sampleValues)
+    d3.json("samples.json").then((data) =>{
+        // call data for samples
+        var samples = data.samples;
+        // filter data per id
+        var filter = samples.filter(sampleObj => sampleObj.id == id);
+        // Pull the first result
+        var result = filter[0]
+        // checks result in consol
+        console.log(result);
+        // x values
+        var sample_values = result.sample_values;
+        // y values
+        var otu_ids = result.otu_ids;
+        // y labels
+        var otu_labels = result.otu_labels;
 
-        var labels = sampledata.samples[0].otu_labels.slice(0,10);
-        console.log(labels)
-
-        var otuTop = (sampledata.samples[0].otu_ids.slice(0,10)).reverse();
-
-        var otuId = otuTop.map(d => "OTU " + d);
-        console.log(`otu ids: ${otuId}`)
-
-        var labels = sampledata.samples[0].otu_labels.slice(0,10);
-        console.log(`otu labels: ${labels}`)
-
+        // Bar Graph data
         var trace = {
-            x: sampleValues,
-            y: otuId,
-            text: labels,
+            x: sample_values.slice(0,10).reverse(),
+            y: otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse(),
+            text: otu_labels.slice(0,10).reverse(),
             marker:{
                 color: 'babyblue'},
             type: "bar",
             orientation: "h"
             };
-        
+        // check for correct data
+        console.log(`${sample_values.slice(0,10).reverse()}`);
+        console.log(`${otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse()}`);
+
         var data = [trace];
 
         var layout = {
@@ -58,14 +49,14 @@ function getPlots(id) {
 
         // Bubble Plot
         var trace1 = {
-            x: sampledata.samples[0].otu_ids,
-            y: sampledata.samples[0].sample_values,
+            x: otu_ids,
+            y: sample_values,
             mode: "markers",
         marker: {
-            size: sampledata.samples[0].sample_values,
-            color: sampledata.samples[0].otu_ids
+            size: sample_values,
+            color: otu_ids
         },
-        text: sampledata.samples[0].otu_labels
+        text: otu_labels
     };
         // set the layout for the bubble plot
         var layout1 = {
@@ -88,7 +79,7 @@ function getDemoInfo(id) {
     d3.json("samples.json").then((data) => {
 
         var metadata = data.metadata;
-        console.log(metadata)
+        // console.log(metadata)
 
         var result = metadata.filter(meta => meta.id.toString() === id)[0];
 
@@ -103,22 +94,21 @@ function getDemoInfo(id) {
 }
 
 
-// Change event
+// Change event when id changes
 function optionChanged(id) {
     getPlots(id);
     getDemoInfo(id);
-    console.log(id)
 };
 
 
-// Starter Preview
+// Starter Preview for when localhost is booted
 function init() {
     // Select dropdown menu
     var dropdown = d3.select("#selDataset");
 
     // Read data
     d3.json("samples.json").then((data)=> {
-        console.log(data)
+        // console.log(data)
 
         data.names.forEach(function(name){
             dropdown.append("option").text(name).property("value");
