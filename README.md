@@ -4,4 +4,4 @@ The assignment consisted of creating an interactive localhost site where the use
 
 Below is a sample illustration of the finalized visualizations on an ID search.
 
-![Image](Images/Image.png)
+![Image](Images/Image.png.png)
